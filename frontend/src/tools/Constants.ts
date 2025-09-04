@@ -1,0 +1,2 @@
+export const FRONTEND_ORIGIN = `${window.location.protocol}//${window.location.host}`;
+export const BACKEND_ORIGIN = FRONTEND_ORIGIN.indexOf('localhost') > -1 ? `${window.location.protocol}//localhost:5000/api` : `${FRONTEND_ORIGIN}/api`;

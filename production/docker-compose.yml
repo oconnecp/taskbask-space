@@ -1,0 +1,95 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/host/conf:ro
+      - ./nginx-entrypoint.sh:/nginx-entrypoint.sh:ro
+      - ./certbot/www/:/var/www/certbot:ro
+      - ./certbot/conf/:/etc/letsencrypt:ro
+    entrypoint: /bin/sh /nginx-entrypoint.sh
+    secrets:
+      - watchtower_webhook_secret
+    restart: always
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt:rw
+      - ./certbot/www:/var/www/certbot:rw
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    restart: always
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+
+  backend:
+    image: oconnecp/taskbask.space-backend:latest
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/mydb
+      HOSTNAME: taskbask.space
+      GOOGLE_CLIENT_ID: /run/secrets/google_client_id
+      GOOGLE_CLIENT_SECRET: /run/secrets/google_client_secret
+      GITHUB_CLIENT_ID: /run/secrets/github_client_id
+      GITHUB_CLIENT_SECRET: /run/secrets/github_client_secret
+      DB_ENCRYPTION_KEY: /run/secrets/db_encryption_key
+    secrets:
+      - google_client_id
+      - google_client_secret
+      - github_client_id
+      - github_client_secret
+      - db_encryption_key
+    depends_on:
+      - db
+    restart: always
+
+  frontend:
+    image: oconnecp/taskbask.space-frontend:latest
+    environment:
+      HOSTNAME: taskbask.space
+      MODE: production
+    depends_on:
+      - backend
+    restart: always
+    
+  watchtower:
+    image: containrrr/watchtower
+    restart: always
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_HTTP_API_TOKEN=supersecrettoken
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 600 --http-api-update --http-api-periodic-polls --http-api-metrics --include-restarting
+  adminer:
+    image: adminer
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  postgres-data:
+
+secrets:
+  google_client_id:
+    file: ./secrets/google_client_id.txt
+  google_client_secret:
+    file: ./secrets/google_client_secret.txt
+  github_client_id:
+    file: ./secrets/github_client_id.txt
+  github_client_secret:
+    file: ./secrets/github_client_secret.txt
+  db_encryption_key:
+    file: ./secrets/db_encryption_key.txt
+  watchtower_webhook_secret:
+    file: ./secrets/watchtower_webhook_secret.txt
