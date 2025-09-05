@@ -1,0 +1,62 @@
+erDiagram
+  tb_users ||--o{ tb_tasks : "assignee_id (SET NULL)"
+  tb_users ||--o{ tb_tasks : "created_by_id (SET NULL)"
+  tb_projects ||--o{ tb_tasks : "project_id (CASCADE)"
+  tb_projects ||--o{ tb_project_statuses : "project_id (CASCADE)"
+  tb_project_statuses ||--o{ tb_tasks : "status_id (RESTRICT)"
+  tb_projects ||--o{ tb_project_memberships : "project_id (CASCADE)"
+  tb_users ||--o{ tb_project_memberships : "user_id (CASCADE)"
+
+  tb_users {
+    uuid id PK
+    varchar auth_zero_id "UNIQUE, len 255"
+    varchar name "len 120, NULL"
+    varchar email "len 255, NULL, INDEX"
+    text profile_picture_url "NULL"
+    jsonb profile_json "NULL"
+    varchar accessToken
+    varchar authProvider
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  tb_projects {
+    uuid id PK
+    varchar name "len 180, INDEX"
+    text description "NULL"
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  tb_project_statuses {
+    uuid id PK
+    uuid project_id FK
+    varchar name "len 80"
+    int order
+    %% Uniques:
+    %% (project_id, name) UNIQUE via u_project_status_name
+    %% (project_id, order) UNIQUE via u_project_status_order
+  }
+
+  tb_tasks {
+    uuid id PK
+    uuid project_id FK "INDEX"
+    uuid assignee_id FK "NULL, INDEX"
+    uuid status_id FK "INDEX"
+    varchar title "len 180"
+    text description "NULL"
+    timestamptz due_date "NULL, INDEX"
+    enum priority "LOW|MEDIUM|HIGH|URGENT (default MEDIUM), INDEX"
+    uuid created_by_id FK "NULL, INDEX"
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  tb_project_memberships {
+    uuid id PK
+    uuid project_id FK "INDEX"
+    uuid user_id FK "INDEX"
+    enum role "OWNER|EDITOR|VIEWER (default EDITOR)"
+    %% Unique:
+    %% (project_id, user_id) UNIQUE via u_member_per_project
+  }

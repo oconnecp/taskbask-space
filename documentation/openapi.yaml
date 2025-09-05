@@ -1,0 +1,480 @@
+openapi: 3.0.3
+info:
+  title: TaskBask API
+  version: 1.0.0
+  description: API documentation for TaskBask backend
+servers:
+  - url: https://TaskBask.space
+    description: Production
+  - url: http://localhost:5000
+    description: Local Development
+tags:
+  - name: Tasks
+    description: Task management endpoints
+paths:
+  /api/user/all:
+    get:
+      summary: List all users
+      description: Returns all users. Requires authentication.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+        '401':
+          description: Unauthorized (missing/invalid token)
+        '500':
+          description: Internal Server Error
+  /api/task:
+    post:
+      summary: Create a task
+      description: Creates a new task for the authenticated user.
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTaskDTO'
+            examples:
+              minimal:
+                summary: Minimal valid request
+                value:
+                  projectId: "6b6f1e28-2c2a-4b6b-9f81-9d19f15b77a3"
+                  statusId: "0c7d1e2a-1234-4b6b-9f81-9d19f15b77a3"
+                  title: "Write unit tests"
+                  priority: "HIGH"
+              full:
+                summary: All fields
+                value:
+                  projectId: "6b6f1e28-2c2a-4b6b-9f81-9d19f15b77a3"
+                  assigneeId: "0a2b8b0a-8a9f-4f7e-9f71-4a2d7a1f9c3e"
+                  statusId: "0c7d1e2a-1234-4b6b-9f81-9d19f15b77a3"
+                  title: "Write unit tests"
+                  description: "Cover services and controllers"
+                  dueDate: "2025-09-15T17:00:00Z"
+                  priority: "URGENT"
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+              examples:
+                created:
+                  value:
+                    id: "4d1c3e44-7f2a-4a4b-8a0a-0f7c9d9b1234"
+                    projectId: "6b6f1e28-2c2a-4b6b-9f81-9d19f15b77a3"
+                    assigneeId: "0a2b8b0a-8a9f-4f7e-9f71-4a2d7a1f9c3e"
+                    statusId: "0c7d1e2a-1234-4b6b-9f81-9d19f15b77a3"
+                    title: "Write unit tests"
+                    description: "Cover services and controllers"
+                    dueDate: "2025-09-15T17:00:00Z"
+                    priority: "HIGH"
+                    createdById: "2b7f2c61-3b0e-49ce-9b8d-7e2b2f6c1d90"
+                    createdAt: "2025-09-07T21:13:00Z"
+                    updatedAt: "2025-09-07T21:13:00Z"
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (missing/invalid token)
+        '500':
+          description: Internal Server Error
+  /api/project:
+    get:
+      summary: List projects for the authenticated user
+      description: Returns all projects (with memberships and statuses) that the current user has access to.
+      tags: [Projects]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Projects visible to the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectPayloadDTO'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+    post:
+      summary: Create a project
+      description: Creates a project owned by the authenticated user and returns the full payload (project, memberships, statuses).
+      tags: [Projects]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              # Your handler reads req.body as ProjectDTO. If you actually accept only name/description,
+              # change this to NewProjectDTO.
+              $ref: '#/components/schemas/NewProjectDTO'
+            examples:
+              sample:
+                value:
+                  name: "New Website"
+                  description: "Marketing site refresh"
+      responses:
+        '200':
+          description: Created project payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectPayloadDTO'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+  /api/project/{projectId}/tasks:
+    get:
+      summary: List tasks for a project
+      tags: [Projects, Tasks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tasks for the specified project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskDTO'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Project not found
+        '500':
+          description: Internal Server Error
+  /api/project/{projectId}/membership/{role}/{userId}:
+    post:
+      summary: Upsert a membership for a project
+      description: Adds or updates a user's role in a project and returns all memberships for that project.
+      tags: [Projects]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: role
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [OWNER, EDITOR, VIEWER]   # ProjectRole
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Updated membership list for the project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectMembershipDTO'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Project or user not found
+        '500':
+          description: Internal Server Error
+  /api/image/proxy-image:
+    get:
+      summary: Proxy an image
+      description: Fetches an image from an external URL and returns it with the correct content type.  
+        Requires authentication.
+      tags: [Images]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: Fully qualified URL of the image to fetch
+          schema:
+            type: string
+            format: uri
+            example: https://example.com/image.jpg
+      responses:
+        '200':
+          description: The proxied image
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/gif:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Missing or invalid `url` parameter
+        '401':
+          description: Unauthorized (missing/invalid token)
+        '500':
+          description: Failed to fetch image
+  /api/auth/authzero:
+    get:
+      summary: Begin Auth0 login
+      description: Initiates the Auth0 OAuth2 authorization flow and redirects the user to Auth0.
+      tags: [Auth]
+      responses:
+        '302':
+          description: Redirect to Auth0
+          headers:
+            Location:
+              description: Auth0 authorization URL
+              schema: { type: string, format: uri }
+
+  /api/auth/authzero/callback:
+    get:
+      summary: Auth0 callback
+      description: Handles the Auth0 callback. On success, redirects to the frontend; on failure, redirects to the error page.
+      tags: [Auth]
+      responses:
+        '302':
+          description: Redirect back to frontend or error page
+          headers:
+            Location:
+              description: FRONTEND_ORIGIN on success; `${FRONTEND_ORIGIN}/error` on failure
+              schema: { type: string, format: uri }
+
+  /api/auth/logout:
+    get:
+      summary: Logout
+      description: Destroys the server session, clears the session cookie, and redirects to the frontend.
+      tags: [Auth]
+      responses:
+        '302':
+          description: Redirect to frontend after logout
+          headers:
+            Location:
+              schema: { type: string, format: uri }
+        '500':
+          description: Logout failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: "Logout failed" }
+
+  /api/auth/user:
+    get:
+      summary: Get current authenticated user
+      description: Returns the current session user if authenticated; otherwise 401.
+      tags: [Auth, Users]
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    oneOf:
+                      - $ref: '#/components/schemas/UserDTO'
+                example:
+                  user: null
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    # ---- Tasks ----
+    NewTaskDTO:
+      type: object
+      required: [projectId, statusId, title, priority]
+      properties:
+        projectId:
+          type: string
+          format: uuid
+        assigneeId:
+          type: string
+          format: uuid
+          nullable: true
+        statusId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        priority:
+          type: string
+          enum: [LOW, MEDIUM, HIGH, URGENT]
+    TaskDTO:
+      allOf:
+        - $ref: '#/components/schemas/NewTaskDTO'
+        - type: object
+          required: [id, createdAt, updatedAt]
+          properties:
+            id:
+              type: string
+              format: uuid
+            createdById:
+              type: string
+              format: uuid
+              nullable: true
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    # ---- Projects ----
+    NewProjectDTO:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: "Marketing Website"
+        description:
+          type: string
+          nullable: true
+          example: "Landing page redesign initiative"
+    ProjectDTO:
+      allOf:
+        - $ref: '#/components/schemas/NewProjectDTO'
+        - type: object
+          required: [id, createdAt, updatedAt]
+          properties:
+            id:
+              type: string
+              format: uuid
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    ProjectMembershipDTO:
+      type: object
+      required: [id, projectId, userId, role]
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [OWNER, EDITOR, VIEWER]
+          example: OWNER
+
+    ProjectStatusDTO:
+      type: object
+      required: [id, projectId, name, order]
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "In Progress"
+        order:
+          type: integer
+          example: 2
+
+    ProjectPayloadDTO:
+      type: object
+      required: [project, memberships, statuses]
+      properties:
+        project:
+          $ref: '#/components/schemas/ProjectDTO'
+        memberships:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectMembershipDTO'
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectStatusDTO'
+
+    # ---- Users ----
+    UserDTO:
+      type: object
+      required: [id, name, email, profilePictureUrl]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        profilePictureUrl:
+          type: string
+          format: uri
+
+    # ---- Errors ----
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string

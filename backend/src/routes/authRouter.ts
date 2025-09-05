@@ -13,7 +13,7 @@ authRouter.get('/authzero',
 );
 
 authRouter.get('/authzero/callback',
-    passport.authenticate('auth0', { failureRedirect: `${FRONTEND_ORIGIN}/error` }),
+    passport.authenticate('auth0', { failureRedirect: `${FRONTEND_ORIGIN}/error`, failureMessage: true }),
     (_req: express.Request, res: express.Response) => {
         res.redirect(FRONTEND_ORIGIN);
     });

@@ -42,7 +42,6 @@ services:
       AUTH_ZERO_DOMAIN: /run/secrets/auth_zero_domain
       AUTH_ZERO_CLIENT_ID: /run/secrets/auth_zero_client_id
       AUTH_ZERO_CLIENT_SECRET: /run/secrets/auth_zero_client_secret
-      SESSION_SECRET: /run/secrets/session_secret
       DB_ENCRYPTION_KEY: /run/secrets/db_encryption_key
     secrets:
       - auth_zero_domain
