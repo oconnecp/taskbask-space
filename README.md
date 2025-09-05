@@ -1,11 +1,10 @@
-## This is the project for TaskBask.space
+# This is the project for [TaskBask.space](https://taskbask.space/)
+This was created as a profile specifically at the request of [CommunityShare.org](https://www.communityshare.org/)
 
-This was created as a profile specifically at the request of CommunityShare.org
-
-Instructions for use:
+## Instructions for use:
 Create an application inside Auth0
 
-# To Deploy to localhost for testing:
+### To Deploy to localhost for testing:
 Set the Allowed Callback URL inside Auth0 to http://localhost:5000/api/auth/authzero/callback
 Set the Allowed Web Origins to http://localhost:3000
 
@@ -28,7 +27,7 @@ both frontend and backend projects support `npm run build && npm run start`
 for frontend development running `npm run dev` will run vite in dev mode for hot reloading.  running `npm run start` will start it in production mode running the express server instead
 
 
-# To Deploy to a server:
+### To Deploy to a server:
 Right now the only way I have tested deployment to a server running ssl has been running a docker compose natively however any docker compose compatible container should be able to run things
 
 Copy the production folder to the server
@@ -40,3 +39,10 @@ todo: ssl setup.  setting up certbot usually requires a specific command to get 
 Run docker compose up -d
 
 Anytime a new image is deployed, watchtower should redeploy the latest version for you automatically.  you can control this by forking the project and creating your own images
+
+
+## What I would do differently with more time
+I definitely would spend time with some input validation.  Inputs on my routes are not well validated and are relying on the frontend sending the right information.  It will throw and handle errors where it needs to but I could make it more eligant.
+
+I originally had the idea of having custom statuses for each project but had to cut that due to scope creep.  It's definitely nice to have so that a project can be more customizeable.
+

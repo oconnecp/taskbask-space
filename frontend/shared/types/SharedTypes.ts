@@ -29,3 +29,23 @@ export type ProjectDTO = {
   createdAt: Date,
   updatedAt: Date
 }
+
+export type ProjectMembershipDTO = {
+  id: string,
+  projectId: string,
+  userId: string,
+  role: 'OWNER' | 'EDITOR' | 'VIEWER'
+}
+
+export type ProjectStatusDTO = {
+  id: string,
+  projectId: string,
+  name: string,
+  order: number
+}
+
+export type ProjectPayloadDTO = {
+  project: ProjectDTO,
+  memberships: ProjectMembershipDTO[],
+  statuses: ProjectStatusDTO[]
+}

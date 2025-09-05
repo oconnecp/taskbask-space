@@ -1,4 +1,4 @@
-import { getFullUrl } from "../../services/ApiClient";
+import { getFullUrl } from "../../services/apiClientService";
 const authzeroAuthHref = getFullUrl('auth/authzero');
 
 const Login = () => {

@@ -1,8 +1,8 @@
-import { TaskDTO } from "../../../shared/types/SharedTypes";
-import { AppDataSource } from "../data-source";
-import { TaskPriority, TBTask } from "../entities/TBTask";
+import { TaskDTO } from "../../../shared/types/sharedTypes";
+import { appDataSource } from "../data-source";
+import { TaskPriority, TBTask } from "../entities/tbTask";
 
-const taskrepository = AppDataSource.getRepository(TBTask);
+const taskrepository = appDataSource.getRepository(TBTask);
 
 export const insertTasks = async (taskDTOs: TaskDTO[]): Promise<TBTask[] | null> => {
     const tasks = taskDTOs.map(dto => {

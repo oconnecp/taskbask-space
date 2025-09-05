@@ -2,9 +2,9 @@ import {
   Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index,
   CreateDateColumn, UpdateDateColumn
 } from "typeorm";
-import { TBProject } from "./TBProject";
-import { TBUser } from "./TBUser";
-import { TBProjectStatus } from "./TBProjectStatus";
+import { TBProject } from "./tbProject";
+import { TBUser } from "./tbUser";
+import { TBProjectStatus } from "./tbProjectStatus";
 
 export enum TaskPriority {
   LOW = "LOW",

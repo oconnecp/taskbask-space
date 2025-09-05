@@ -1,16 +1,18 @@
 import express from 'express';
 import passport from 'passport';
-import { FRONTEND_ORIGIN } from '../tools/Constants';
-import { TBUser } from '../db/entities/TBUser';
 
-const AuthRouter = express.Router()
+import { FRONTEND_ORIGIN } from '../tools/constants';
 
-// base url /auth from the server.ts file
+import { TBUser } from '../db/entities/tbUser';
 
-AuthRouter.get('/authzero',
+export const baseAuthUrl = '/auth';
+export const authRouter = express.Router()
+
+authRouter.get('/authzero',
     passport.authenticate('auth0', { scope: 'openid email profile' }),
 );
-AuthRouter.get('/authzero/callback',
+
+authRouter.get('/authzero/callback',
     passport.authenticate('auth0', { failureRedirect: `${FRONTEND_ORIGIN}/error` }),
     (req: express.Request, res: express.Response) => {
         req.session.save(() => {
@@ -18,7 +20,7 @@ AuthRouter.get('/authzero/callback',
         });
     });
 
-AuthRouter.get('/user', (req: express.Request, res: express.Response) => {
+authRouter.get('/user', (req: express.Request, res: express.Response) => {
     if (req.isAuthenticated && req.isAuthenticated()) {
         const thisUser = req.user as TBUser;
         console.log('Authenticated user:', thisUser);
@@ -31,7 +33,7 @@ AuthRouter.get('/user', (req: express.Request, res: express.Response) => {
 });
 
 
-AuthRouter.get('/logout', (req: express.Request, res: express.Response) => {
+authRouter.get('/logout', (req: express.Request, res: express.Response) => {
     req.logout((err) => {
         if (err) {
             console.error('Logout error:', err);
@@ -42,5 +44,3 @@ AuthRouter.get('/logout', (req: express.Request, res: express.Response) => {
     }
     );
 });
-
-export default AuthRouter;

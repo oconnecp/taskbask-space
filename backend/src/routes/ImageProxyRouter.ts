@@ -1,8 +1,11 @@
 import express from 'express';
 import axios from 'axios';
 
-// base url /images from the server.ts file
-const ImageProxyRouter = express.Router();
+import { ensureAuthenticated } from "../tools/ensureAuthenticatedMiddleware";
+
+
+export const baseImageProxyUrl = '/image';
+export const imageProxyRouter = express.Router();
 
 // I was having CORS issues loading images from other domains in the frontend
 // so this is a simple proxy to fetch the image and return it with CORS headers
@@ -10,10 +13,7 @@ const ImageProxyRouter = express.Router();
 // when a users url changes we can update the cached image
 // for now authentication is required to use this endpoint as a basic protection
 // this was just a quick solution to unblock frontend work
-ImageProxyRouter.get('/proxy-image', async (req, res) => {
-    if (!req.isAuthenticated && !req.isAuthenticated()) {
-        return res.status(401).json({ user: null });
-    }
+imageProxyRouter.get('/proxy-image', ensureAuthenticated, async (req, res) => {
     const { url } = req.query;
     if (!url || typeof url !== 'string') {
         return res.status(400).send('Missing url parameter');
@@ -29,5 +29,3 @@ ImageProxyRouter.get('/proxy-image', async (req, res) => {
         res.status(500).send('Failed to fetch image');
     }
 });
-
-export default ImageProxyRouter;

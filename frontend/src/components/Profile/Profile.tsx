@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFullUrl } from '../../services/ApiClient';
-import { UserDTO } from '../../../shared/types/SharedTypes';
+import { getFullUrl } from '../../services/apiClientService';
+import { UserDTO } from '../../../shared/types/sharedTypes';
 
 interface ProfileProps {
     user?: UserDTO | null;
@@ -20,7 +20,7 @@ const Profile: React.FC<ProfileProps> = ({user}) => {
         return null;
     }
 
-    const userProfilePictureUrl = user.profilePictureUrl? getFullUrl(`/api/images/proxy-image?url=${encodeURIComponent(user.profilePictureUrl)}`) : undefined;
+    const userProfilePictureUrl = user.profilePictureUrl? getFullUrl(`/api/image/proxy-image?url=${encodeURIComponent(user.profilePictureUrl)}`) : undefined;
 
     return (
         <div>
@@ -37,7 +37,5 @@ const Profile: React.FC<ProfileProps> = ({user}) => {
     );
 
 };
-
-
 
 export default Profile;

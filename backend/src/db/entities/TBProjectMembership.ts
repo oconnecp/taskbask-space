@@ -1,8 +1,8 @@
 import {
   Entity, PrimaryGeneratedColumn, Column, ManyToOne, Unique, Index
 } from "typeorm";
-import { TBUser } from "./TBUser";
-import { TBProject } from "./TBProject";
+import { TBUser } from "./tbUser";
+import { TBProject } from "./tbProject";
 
 export enum ProjectRole {
   OWNER = "OWNER",

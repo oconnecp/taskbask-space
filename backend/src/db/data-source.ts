@@ -1,10 +1,10 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { TBUser } from "./entities/TBUser";
+import { TBUser } from "./entities/tbUser";
 
-import { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME } from "../tools/Constants";
+import { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME } from "../tools/constants";
 
-export const AppDataSource = new DataSource({
+export const appDataSource = new DataSource({
   type: "postgres",
   host: DB_HOST, // e.g., "localhost"
   port: parseInt(DB_PORT), // Default PostgreSQL port

@@ -1,31 +1,52 @@
 import express from 'express';
 
-import { getProjectMemberships } from '../db/repositories/TBProjectMembershipRepository';
+import { ensureAuthenticated } from "../tools/ensureAuthenticatedMiddleware";
 
-import { TBUser } from '../db/entities/TBUser';
-import { TBProject } from '../db/entities/TBProject';
+import { TBUser } from '../db/entities/tbUser';
+import { ProjectDTO, ProjectPayloadDTO } from '../../shared/types/sharedTypes';
 
+import { createNewProject, getAllProjectPayloadsByUserId, upsertMembershiptoProject } from '../services/projectService';
+import { ProjectRole } from '../db/entities/tbProjectMembership';
 
-const ProjectRoutes = express.Router()
-
-// base url /project from the server.ts file
+export const baseProjectUrl = '/project';
+export const projectRouter = express.Router()
 
 //get all projects for the logged in user
-ProjectRoutes.get('/', (req: express.Request, res: express.Response) => {
-    if (!req.isAuthenticated && !req.isAuthenticated()) {
-        return res.status(401).json({ user: null });
-    }
-
+projectRouter.get('/', ensureAuthenticated, async (req: express.Request, res: express.Response) => {
     const thisUser = req.user as TBUser;
-    const projectMemberships = getProjectMemberships(thisUser.id);
-    console.log(projectMemberships);
+
+    try {
+        const allProjecctsFromThisUser: ProjectPayloadDTO[] = await getAllProjectPayloadsByUserId(thisUser.id);
+        return res.status(200).json(allProjecctsFromThisUser);
+    } catch (error) {
+        console.error("Error fetching projects for user:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
-ProjectRoutes.post('/', (req: express.Request, res: express.Response) => {
-    if (!req.isAuthenticated && !req.isAuthenticated()) {
-        return res.status(401).json({ user: null });
-    }
+projectRouter.post('/', ensureAuthenticated, async (req: express.Request, res: express.Response) => {
     const thisUser = req.user as TBUser;
-    const newProject = req.body as TBProject;
+    const newProject = req.body as ProjectDTO;
 
-export default ProjectRoutes;
+    try {
+        const projectPayload: ProjectPayloadDTO = await createNewProject(thisUser.id, newProject);
+
+        return res.status(200).json(projectPayload);
+    } catch (error) {
+        console.error("Error creating project:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+projectRouter.post('/:projectId/membership/:role/:userId', ensureAuthenticated, async (req: express.Request, res: express.Response) => {
+    const thisUser = req.user as TBUser;
+    const { projectId, role, userId } = req.params;
+
+    try{
+        const allMembershipsForThisProject = await upsertMembershiptoProject(thisUser.id, projectId, role as ProjectRole, userId);
+        return res.status(201).json(allMembershipsForThisProject);
+    }catch(error){
+        console.error("Error adding membership to project:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+});

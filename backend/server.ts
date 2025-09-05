@@ -7,14 +7,17 @@ import connectPGSimple from 'connect-pg-simple';
 import {
   ADD_CORS, PORT, FRONTEND_ORIGIN, SESSION_SECRET, MODE,
   DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
-} from './src/tools/Constants';
+} from './src/tools/constants';
 //Services
-import { initializeAuthService } from './src/services/AuthService';
-import { AppDataSource } from "./src/db/data-source";
+import { initializeAuthService } from './src/services/authService';
+import { appDataSource } from "./src/db/data-source";
 
 //Routers
-import AuthRouter from './src/routes/AuthRouter';
-import ImageProxyRouter from './src/routes/ImageProxyRouter';
+import {baseAuthUrl, authRouter} from './src/routes/authRouter';
+import { baseImageProxyUrl, imageProxyRouter } from './src/routes/imageProxyRouter';
+import { baseProjectUrl, projectRouter } from './src/routes/projectRoutes';
+import { baseTaskUrl, taskRouter } from './src/routes/taskRoutes';
+import { baseUserUrl, userRouter } from './src/routes/userRouter';
 
 
 const app = express();
@@ -73,14 +76,17 @@ initializeAuthService(app);
 
 
 
-app.use(`${baseUrl}/auth`, AuthRouter);
-app.use(`${baseUrl}/images`, ImageProxyRouter);
+app.use(`${baseUrl}${baseAuthUrl}`, authRouter);
+app.use(`${baseUrl}${baseImageProxyUrl}`, imageProxyRouter);
+app.use(`${baseUrl}${baseProjectUrl}`, projectRouter);
+app.use(`${baseUrl}${baseTaskUrl}`, taskRouter);
+app.use(`${baseUrl}${baseUserUrl}`, userRouter);
 
 app.get(`${baseUrl}/healthcheck`, async (req: Request, res: Response) => {
   console.log('Health check endpoint hit');
   // Check the TypeORM connection
   try {
-    await AppDataSource.query('SELECT 1');
+    await appDataSource.query('SELECT 1');
     console.log('Database connection is healthy');
   } catch (error) {
     console.error('Database connection error:', error);
@@ -90,7 +96,7 @@ app.get(`${baseUrl}/healthcheck`, async (req: Request, res: Response) => {
   res.send('All good!');
 });
 
-AppDataSource.initialize()
+appDataSource.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
 

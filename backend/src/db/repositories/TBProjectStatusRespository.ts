@@ -1,9 +1,10 @@
-import { AppDataSource } from "../data-source";
-import { TBProjectStatus } from "../entities/TBProjectStatus";
+import { In } from "typeorm";
+import { appDataSource } from "../data-source";
+import { TBProjectStatus } from "../entities/tbProjectStatus";
 
-const projectStatusRepository = AppDataSource.getRepository(TBProjectStatus);
+const projectStatusRepository = appDataSource.getRepository(TBProjectStatus);
 
-export const insertProjectStatuses = async (projectId: string, statuses: string[]): Promise<TBProjectStatus[] | null> => {
+export const insertProjectStatuses = async (projectId: string, statuses: string[]): Promise<TBProjectStatus[]> => {
     const statusEntities = statuses.map((name, idx) =>
         projectStatusRepository.create({
             projectId, 
@@ -17,7 +18,17 @@ export const insertProjectStatuses = async (projectId: string, statuses: string[
 export const getProjectStatuses = async (projectId: string): Promise<TBProjectStatus[]> => {
     return await projectStatusRepository.find({
         where: { projectId },
-        order: { order: "ASC" }
+        order: { order: "ASC" },
+    });
+};
+
+export const getProjectStatusesWithProjectHydration = async (projectIds: string[]): Promise<TBProjectStatus[]> => {
+    return await projectStatusRepository.find({
+        where: { 
+            projectId: In(projectIds)
+         },
+        order: { order: "ASC" },
+        relations: ["project"],
     });
 };
 

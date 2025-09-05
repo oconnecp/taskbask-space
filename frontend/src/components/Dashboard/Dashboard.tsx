@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { UserDTO } from '../../../shared/types/SharedTypes';
+import { UserDTO } from '../../../shared/types/sharedTypes';
 
 interface DashboardProps {
     user?: UserDTO | null;

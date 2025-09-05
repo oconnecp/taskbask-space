@@ -1,10 +1,10 @@
-import { AppDataSource } from "../data-source";
-import { TBUser } from "../entities/TBUser";
+import { appDataSource } from "../data-source";
+import { TBUser } from "../entities/tbUser";
 
-import { DB_ENCRYPTION_KEY } from "../../tools/Constants";
-import { encrypt, decrypt } from "../../services/EncryptionService"
+import { DB_ENCRYPTION_KEY } from "../../tools/constants";
+import { encrypt, decrypt } from "../../services/encryptionService"
 
-const userRepository = AppDataSource.getRepository(TBUser);
+const userRepository = appDataSource.getRepository(TBUser);
 
 export const getUserByAuthZeroId = async (authZeroId: string): Promise<TBUser | null> => {
     const user = await userRepository.findOneBy({ authZeroId });
@@ -46,5 +46,9 @@ export const upsertUser = async (user: TBUser | Required<Omit<TBUser, 'id' | 'cr
         user.accessToken = encrypt(user.accessToken || '', DB_ENCRYPTION_KEY);
         return await userRepository.save(user);
     }
+}
+
+export const getAllUsers = async (): Promise<TBUser[]> => {
+    return await userRepository.find();
 }
 
