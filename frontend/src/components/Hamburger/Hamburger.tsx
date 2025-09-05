@@ -30,9 +30,13 @@ export const Hamburger: React.FC<HamburgerProps> = ({ children }) => {
 
   if (width > 768) {
     return (
-      <div style={hamburgerWideStyle}>
-        {children}
-      </div>
+      <>
+        <div style={hamburgerWideStyle}>
+          {children}
+        </div>
+        {/* this will take up the space that the hamburger menu is supposed to take */}
+        <div style={{ height: "24px" }}></div>
+      </>
     )
   }
 
@@ -89,20 +93,20 @@ export const Hamburger: React.FC<HamburgerProps> = ({ children }) => {
       )}
       {drawerOpen && (
         <>
-        <div style={drawerStyle}>
-          <div
-            style={hamburgerThinStyle}
-            onClick={() => setDrawerOpen(!drawerOpen)}
-          >
-            <MenuSVG />
+          <div style={drawerStyle}>
+            <div
+              style={hamburgerThinStyle}
+              onClick={() => setDrawerOpen(!drawerOpen)}
+            >
+              <MenuSVG />
+            </div>
+            <div style={innerDrawerStyle}>
+              {children && Array.isArray(children) && children.map((child, index) => (
+                <div style={childStyling} key={index}>{child}</div>
+              ))}
+            </div>
           </div>
-          <div style={innerDrawerStyle}>
-            {children && Array.isArray(children) && children.map((child, index) => (
-              <div style={childStyling} key={index}>{child}</div>
-            ))}
-          </div>
-        </div>
-        <div style={offClickBlockStyle} onClick={() => setDrawerOpen(!drawerOpen)}/>
+          <div style={offClickBlockStyle} onClick={() => setDrawerOpen(!drawerOpen)} />
         </>
       )}
     </div>

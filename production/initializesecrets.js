@@ -3,11 +3,10 @@ const path = require('path');
 
 const secretsDir = path.join(__dirname, 'secrets');
 const secretFiles = [
-  'google_client_id.txt',
-  'google_client_secret.txt',
-  'github_client_id.txt',
-  'github_client_secret.txt',
-  'db_encryption_key.txt',
+  'auth_zero_domain.txt',
+  'auth_zero_client_id.txt',
+  'auth_zero_client_secret.txt',
+  'session_secret.txt',
   'watchtower_webhook_secret.txt'
 ];
 

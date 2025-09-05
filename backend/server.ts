@@ -1,8 +1,20 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import session from 'express-session';
+import connectPGSimple from 'connect-pg-simple';
+
+// Environment variables
+import {
+  ADD_CORS, PORT, FRONTEND_ORIGIN, SESSION_SECRET, MODE,
+  DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
+} from './src/tools/Constants';
+//Services
+import { initializeAuthService } from './src/services/AuthService';
 import { AppDataSource } from "./src/db/data-source";
-import { ADD_CORS, PORT, FRONTEND_ORIGIN, SESSION_SECRET } from './src/tools/Constants';
+
+//Routers
+import AuthRouter from './src/routes/AuthRouter';
+
 
 const app = express();
 const baseUrl = '/api';
@@ -20,42 +32,70 @@ if (ADD_CORS) {
   }));
 }
 
-AppDataSource.initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
-    // Start your server or application logic here
-  })
-  .catch((err) => {
-    console.error("Error during Data Source initialization:", err);
-  });
-
 // logger middleware
-app.use((req: Request ,res:Response,next) =>{
+app.use((req: Request, res: Response, next) => {
   const time = new Date(Date.now()).toString();
-  console.log(req.method,req.hostname, req.path, time);
+  console.log(req.method, req.hostname, req.path, time);
   next();
 });
 
 app.use(express.json());
-app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: true }));
+// app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: true }));
 
+const PgStore = connectPGSimple(session);
+
+
+const pgConnectionString = process.env.DATABASE_URL ||
+  `postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
+
+app.use(
+  session({
+    store: new PgStore({
+      conString: pgConnectionString,
+      tableName: "session",
+      createTableIfMissing: true,
+
+    }),
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: MODE === "production",
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 8, // 8 hours
+    },
+  })
+);
+
+initializeAuthService(app);
+
+
+
+app.use(`${baseUrl}/auth`, AuthRouter);
 
 app.get(`${baseUrl}/healthcheck`, async (req: Request, res: Response) => {
-  console.log('Health check endpoint hit'); 
+  console.log('Health check endpoint hit');
   // Check the TypeORM connection
   try {
     await AppDataSource.query('SELECT 1');
     console.log('Database connection is healthy');
   } catch (error) {
-    console.error('Database connection error:', error); 
+    console.error('Database connection error:', error);
     return res.status(500).json({ error: 'Database connection error' });
   }
 
   res.send('All good!');
 });
 
-app.use(`${baseUrl}/auth`, AuthRouter);
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Data Source has been initialized!");
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Error during Data Source initialization:", err);
+  });
