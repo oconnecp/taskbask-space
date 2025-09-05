@@ -10,8 +10,10 @@ import { insertProjectStatuses, getProjectStatusesWithProjectHydration } from ".
 
 //create the project
 export const createNewProject = async (userId: string, projectDTO: ProjectDTO): Promise<ProjectPayloadDTO> => {
+    console.log(console.log('new projectDTO:', projectDTO));
     const project: TBProject = await upsertProject(projectDTO)
     // removing scope for now, we will add custom statuses later
+    console.log('projectUpserted:', project);
     const statusInsertPromise = insertProjectStatuses(project.id, ["To Do", "In Progress", "Done"]);
     const membershipInsertPromise = insertProjectMemberships(project.id, ProjectRole.OWNER, [userId]);
 
@@ -35,7 +37,9 @@ export const getAllProjectPayloadsByUserId = async (userId: string): Promise<Pro
     // map of projectId to { project, statuses[] }
     const allProjectsAndStatusesMap: Record<string, { project: TBProject, statuses: TBProjectStatus[] }> = allProjectStatusesWithProjectHydration.reduce((acc, hydratedProjectStatus: TBProjectStatus) => {
         const projectId = hydratedProjectStatus.projectId;
+        console.log('projectId:', projectId)
         if (!acc[projectId]) {
+            console.log('hydratedProjectStatus.project:', hydratedProjectStatus.project)
             acc[projectId] = { project: hydratedProjectStatus.project, statuses: [hydratedProjectStatus] };
         } else {
             acc[projectId].statuses.push(hydratedProjectStatus);
@@ -43,21 +47,27 @@ export const getAllProjectPayloadsByUserId = async (userId: string): Promise<Pro
         return acc;
     }, {} as Record<string, { project: TBProject, statuses: TBProjectStatus[] }>);
 
+    console.log('allProjectsAndStatusesMap:', allProjectsAndStatusesMap);
+
     // map of projectId to memberships[]
-    const allProjectPayloads: Record<string, TBProjectMembership[]> = allProjectMemberships.reduce((acc, membership: TBProjectMembership) => {
+    const allProjectMembershipsMap: Record<string, TBProjectMembership[]> = allProjectMemberships.reduce((acc, membership: TBProjectMembership) => {
         const projectId = membership.projectId;
+        console.log('membership:', membership)
+        console.log('projectId:', projectId)
         if (!acc[projectId]) {
             acc[projectId] = [membership];
         } else {
-            acc[projectId].push(membership);
+            acc[projectId] = [...acc[projectId], membership];
         }
         return acc;
     }, {} as Record<string, TBProjectMembership[]>);
 
+    console.log('allProjectMembershipsMap:', allProjectMembershipsMap);
+
     // construct the final payloads
     const projectPayloads: ProjectPayloadDTO[] = thisUserMembershipProjectIds.map(projectId => {
         const projectAndStatuses = allProjectsAndStatusesMap[projectId];
-        const memberships = allProjectPayloads[projectId];
+        const memberships = allProjectMembershipsMap[projectId];
         
         return convertToProjectPayloadDTO(projectAndStatuses.project, memberships, projectAndStatuses.statuses);
     });

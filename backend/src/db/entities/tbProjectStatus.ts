@@ -1,9 +1,9 @@
-  import {
-  Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index, Unique
+import {
+  Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index, Unique, JoinColumn
 } from "typeorm";
 import { TBProject } from "./tbProject";
 
-@Entity({ name: "project_statuses" })
+@Entity({ name: "tb_project_statuses" })
 @Unique("u_project_status_name", ["projectId", "name"])
 @Unique("u_project_status_order", ["projectId", "order"])
 export class TBProjectStatus {
@@ -15,6 +15,7 @@ export class TBProjectStatus {
   projectId!: string;
 
   @ManyToOne(() => TBProject, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "project_id" })
   project!: TBProject;
 
   // e.g. "To-Do", "In Progress", "Complete"
@@ -25,3 +26,5 @@ export class TBProjectStatus {
   @Column({ type: "int" })
   order!: number;
 }
+
+

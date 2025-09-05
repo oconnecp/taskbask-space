@@ -1,5 +1,6 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, ManyToOne, Unique, Index
+  Entity, PrimaryGeneratedColumn, Column, ManyToOne, Unique, Index,
+  JoinColumn
 } from "typeorm";
 import { TBUser } from "./tbUser";
 import { TBProject } from "./tbProject";
@@ -21,6 +22,7 @@ export class TBProjectMembership {
   projectId!: string;
 
   @ManyToOne(() => TBProject, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "project_id" })
   project!: TBProject;
 
   @Index()
@@ -28,6 +30,7 @@ export class TBProjectMembership {
   userId!: string;
 
   @ManyToOne(() => TBUser, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "user_id" })
   user!: TBUser;
 
   @Index()

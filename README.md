@@ -9,11 +9,11 @@ Set the Allowed Callback URL inside Auth0 to http://localhost:5000/api/auth/auth
 Set the Allowed Web Origins to http://localhost:3000
 
 Pull down the project via github
-Add your secrets by adding a .env file to the backend folder, adding them to the environment, or adding them as docker compose secrets.  You will need the following variables
-AUTH_ZERO_DOMAIN
-AUTH_ZERO_CLIENT_ID
-AUTH_ZERO_CLIENT_SECRET
-SESSION_SECRET
+Add your secrets by adding a .env file to the backend folder, adding them to the environment, or adding them as docker compose secrets.  You will need the following variables:
+- AUTH_ZERO_DOMAIN
+- AUTH_ZERO_CLIENT_ID
+- AUTH_ZERO_CLIENT_SECRET
+- SESSION_SECRET
 
 the SESSION_SECRET will need to be 64 characters long.  if no session secret is provided, one will be generated but all sessions will be invalid upon backend server restart
 
@@ -46,3 +46,14 @@ I definitely would spend time with some input validation.  Inputs on my routes a
 
 I originally had the idea of having custom statuses for each project but had to cut that due to scope creep.  It's definitely nice to have so that a project can be more customizeable.
 
+I would definitely implement storybook to help prototype my project.  I was missing it on this go around
+
+I would implement Styled to better create cleaner components with readable styling.  The styling is not industry standard but I was pressed for time.
+
+I would create a more robust modal system or find one I liked off the shelf
+
+we desperately need more linting rules
+
+we should implement versioning
+
+clean up the user selector tech debt

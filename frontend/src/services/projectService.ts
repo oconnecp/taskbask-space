@@ -1,7 +1,8 @@
 import { apiGet, apiPost } from './apiClientService';
-import { ProjectPayloadDTO, ProjectDTO } from '../../shared/types/sharedTypes';
+import { ProjectPayloadDTO, TaskDTO, NewProjectDTO } from '../../shared/types/sharedTypes';
+import e from 'cors';
 
-const PROJECT_API_BASE = '/project';
+const PROJECT_API_BASE = 'project';
 export const getAllProjectsForUser = async (): Promise<ProjectPayloadDTO[] | null> => {
     try {
         // Call the backend API to get user info and cache it
@@ -13,7 +14,7 @@ export const getAllProjectsForUser = async (): Promise<ProjectPayloadDTO[] | nul
     }
 }
 
-export const postNewProject = async (newProject: ProjectDTO): Promise<ProjectPayloadDTO | null> => {
+export const postNewProject = async (newProject: NewProjectDTO): Promise<ProjectPayloadDTO | null> => {
     try {
         const response = await apiPost<ProjectPayloadDTO>(PROJECT_API_BASE, newProject);
         return response.data;
@@ -35,3 +36,15 @@ export const upsertMembershiptoProject = async (projectId: string, role: string,
     }
 
 }
+
+export const getAllTasksForProject = async (projectId: string): Promise<TaskDTO[]> => {
+    const getAllTasksForProjectUrl = `${PROJECT_API_BASE}/${projectId}/tasks`;
+    try {
+        const response = await apiGet<TaskDTO[]>(getAllTasksForProjectUrl, false);
+        return response.data;
+    }catch (error: any) {
+        console.error("Error fetching tasks for project: ", error);
+        return [];
+    }   
+}
+

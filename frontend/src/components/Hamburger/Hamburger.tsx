@@ -22,8 +22,10 @@ export const Hamburger: React.FC<HamburgerProps> = ({ children }) => {
     flexDirection: "row",
     justifyContent: "end",
     position: "fixed",
-    top: 0,
-    left: 0,
+    // padding: "0 20px 20px 0px",
+    top: "2px",
+    left: "2px",
+    right: "4px",
     width: "100%",
     zIndex: 100
   }
@@ -35,7 +37,7 @@ export const Hamburger: React.FC<HamburgerProps> = ({ children }) => {
           {children}
         </div>
         {/* this will take up the space that the hamburger menu is supposed to take */}
-        <div style={{ height: "24px" }}></div>
+        <div style={{ height: "40px" }}></div>
       </>
     )
   }
@@ -83,6 +85,8 @@ export const Hamburger: React.FC<HamburgerProps> = ({ children }) => {
 
   return (
     <div>
+      <div style={{ height: "40px" }}></div>
+
       {!drawerOpen && (
         <div
           style={hamburgerThinStyle}

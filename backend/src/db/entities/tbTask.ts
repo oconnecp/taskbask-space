@@ -1,6 +1,6 @@
 import {
   Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index,
-  CreateDateColumn, UpdateDateColumn
+  CreateDateColumn, UpdateDateColumn, JoinColumn
 } from "typeorm";
 import { TBProject } from "./tbProject";
 import { TBUser } from "./tbUser";
@@ -13,7 +13,7 @@ export enum TaskPriority {
   URGENT = "URGENT",
 }
 
-@Entity({ name: "tasks" })
+@Entity({ name: "tb_tasks" })
 export class TBTask {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -23,6 +23,7 @@ export class TBTask {
   projectId!: string;
 
   @ManyToOne(() => TBProject, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "project_id" })
   project!: TBProject;
 
   // Nullable assignee; if user deleted, keep history -> set null
@@ -31,6 +32,7 @@ export class TBTask {
   assigneeId!: string | null;
 
   @ManyToOne(() => TBUser, { onDelete: "SET NULL" })
+  @JoinColumn({ name: "assignee_id" })
   assignee!: TBUser | null;
 
   // enforce valid status by referencing project_statuses
@@ -39,6 +41,7 @@ export class TBTask {
   statusId!: string;
 
   @ManyToOne(() => TBProjectStatus, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "status_id" })
   status!: TBProjectStatus;
 
   @Column({ type: "varchar", length: 180 })

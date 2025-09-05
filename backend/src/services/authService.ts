@@ -20,7 +20,6 @@ export const initializeAuthService = (app: Application) => {
     },
         async (accessToken: string, _refreshToken: string, extraParams: any, profile: any, done: (error: any, user?: any) => void) => {
             try {
-
                 const saveableUser = {
                     name: profile.displayName,
                     authZeroId: profile.id,
@@ -31,7 +30,6 @@ export const initializeAuthService = (app: Application) => {
                     authProvider: profile.provider,
                 };
 
-                console.log('login detected from: ', saveableUser.name);
 
                 const user = await upsertUser(saveableUser);
                 if (!user) {
@@ -46,12 +44,10 @@ export const initializeAuthService = (app: Application) => {
 
 
     passport.serializeUser((user: any, done) => {
-        console.log('Serializing user:', user);
         done(null, user.id);
     });
 
     passport.deserializeUser(async (id: number, done) => {
-        console.log('Deserializing user with id:', id);
         const user = await getUserById(id.toString());
         done(null, user);
     });

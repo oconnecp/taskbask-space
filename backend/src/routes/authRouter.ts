@@ -14,24 +14,9 @@ authRouter.get('/authzero',
 
 authRouter.get('/authzero/callback',
     passport.authenticate('auth0', { failureRedirect: `${FRONTEND_ORIGIN}/error` }),
-    (req: express.Request, res: express.Response) => {
-        req.session.save(() => {
-            res.redirect(FRONTEND_ORIGIN);
-        });
+    (_req: express.Request, res: express.Response) => {
+        res.redirect(FRONTEND_ORIGIN);
     });
-
-authRouter.get('/user', (req: express.Request, res: express.Response) => {
-    if (req.isAuthenticated && req.isAuthenticated()) {
-        const thisUser = req.user as TBUser;
-        console.log('Authenticated user:', thisUser);
-
-        res.json(thisUser);
-    }
-    else {
-        res.status(401).json({ user: null });
-    }
-});
-
 
 authRouter.get('/logout', (req: express.Request, res: express.Response) => {
     req.logout((err) => {
@@ -43,4 +28,14 @@ authRouter.get('/logout', (req: express.Request, res: express.Response) => {
         res.redirect(FRONTEND_ORIGIN);
     }
     );
+});
+
+authRouter.get('/user', (req: express.Request, res: express.Response) => {
+    if (req.isAuthenticated && req.isAuthenticated()) {
+        const thisUser = req.user as TBUser;
+        res.json(thisUser);
+    }
+    else {
+        res.status(401).json({ user: null });
+    }
 });

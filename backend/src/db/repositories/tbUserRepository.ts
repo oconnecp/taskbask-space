@@ -13,7 +13,6 @@ export const getUserByAuthZeroId = async (authZeroId: string): Promise<TBUser | 
     }
 
     user.accessToken = decrypt(user.accessToken, DB_ENCRYPTION_KEY);
-
     return user;
 };
 
@@ -22,7 +21,6 @@ export const getUserById = async (id: string): Promise<TBUser | null> => {
     if (!user) {
         return null;
     }
-
     user.accessToken = decrypt(user.accessToken, DB_ENCRYPTION_KEY);
     return user;
 };
@@ -33,17 +31,16 @@ export const upsertUser = async (user: TBUser | Required<Omit<TBUser, 'id' | 'cr
 
     if (existingUser) {
         existingUser.name = user.name || existingUser.name;
-        existingUser.accessToken = encrypt(user.accessToken || existingUser.accessToken || '', DB_ENCRYPTION_KEY);
+        existingUser.accessToken = encrypt(user.accessToken, DB_ENCRYPTION_KEY) || existingUser.accessToken;
         existingUser.profilePictureUrl = user.profilePictureUrl || existingUser.profilePictureUrl;
         existingUser.email = user.email || existingUser.email;
-        existingUser.accessToken = user.accessToken || existingUser.accessToken;
         existingUser.profileJson = user.profileJson || existingUser.profileJson;
         existingUser.authProvider = user.authProvider || existingUser.authProvider;
         
         return await userRepository.save(existingUser);
     } else {
 
-        user.accessToken = encrypt(user.accessToken || '', DB_ENCRYPTION_KEY);
+        user.accessToken = encrypt(user.accessToken, DB_ENCRYPTION_KEY);
         return await userRepository.save(user);
     }
 }

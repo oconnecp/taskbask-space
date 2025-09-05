@@ -1,14 +1,16 @@
-import { TaskDTO } from "../../../shared/types/sharedTypes";
+import { TaskDTO, NewTaskDTO } from "../../../shared/types/sharedTypes";
 import { appDataSource } from "../data-source";
 import { TaskPriority, TBTask } from "../entities/tbTask";
 
 const taskrepository = appDataSource.getRepository(TBTask);
 
-export const insertTasks = async (taskDTOs: TaskDTO[]): Promise<TBTask[] | null> => {
+export const insertTasks = async (createdById:string, taskDTOs: NewTaskDTO[]): Promise<TBTask[]> => {
     const tasks = taskDTOs.map(dto => {
         return taskrepository.create({
             ...dto,
             priority: dto.priority as TaskPriority || "MEDIUM",
+            createdById: createdById,
+            assigneeId: dto.assigneeId || createdById,
         });
     });
 

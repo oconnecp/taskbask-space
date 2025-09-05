@@ -8,8 +8,7 @@ export type UserDTO = {
   profilePictureUrl: string
 }
 
-export type TaskDTO = {
-  id: string,
+export type NewTaskDTO = {
   projectId: string,
   assigneeId: string | null,
   statusId: string,
@@ -17,15 +16,22 @@ export type TaskDTO = {
   description: string | null,
   dueDate: Date | null,
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
+}
+
+export type TaskDTO = NewTaskDTO & {
+  id: string,
   createdById: string | null,
   createdAt: Date,
   updatedAt: Date
 }
 
-export type ProjectDTO = {
-  id: string,
+export type NewProjectDTO = {
   name: string,
-  description: string | null,
+  description: string | null
+}
+
+export type ProjectDTO = NewProjectDTO & {
+  id: string,
   createdAt: Date,
   updatedAt: Date
 }

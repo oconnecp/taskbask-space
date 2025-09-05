@@ -1,12 +1,16 @@
 import React from 'react';
 
-import { UserDTO } from '../../../shared/types/sharedTypes';
+import { UserDTO, ProjectPayloadDTO } from '../../../shared/types/sharedTypes';
+import ProjectViewer from '../DataViews/ProjectViewer';
+import TaskViewer from '../DataViews/TaskViewer';
+
+import './Dashboard.css';
 
 interface DashboardProps {
     user?: UserDTO | null;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({user}) => {
+const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     if (!user) {
         return (
             <div>
@@ -15,12 +19,14 @@ const Dashboard: React.FC<DashboardProps> = ({user}) => {
         );
     }
 
+    const [selectedProjectPayload, setSelectedProjectId] = React.useState<ProjectPayloadDTO | null>(null);
+
     return (
-        <div>
-            <h1>Dashboard</h1>
-            <p>Welcome, {user.name}!</p>
-            <p>Your email: {user.email}</p>
-        </div>
+            <div className="dashboard-flex">
+                <ProjectViewer onProjectSelect={setSelectedProjectId} selectedProjectId={selectedProjectPayload ? selectedProjectPayload.project.id : null} />
+                {/* <br/> */}
+                <TaskViewer selectedProjectPayloadDTO={selectedProjectPayload} />
+            </div>
     );
 
 };
