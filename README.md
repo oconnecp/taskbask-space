@@ -1,6 +1,8 @@
 # This is the project for [TaskBask.space](https://taskbask.space/)
 This was created as a profile specifically at the request of [CommunityShare.org](https://www.communityshare.org/)
 
+If you can't absolutely BASK in your TASKS, then what are you really doing with your space?
+
 ## Instructions for use:
 Create an application inside Auth0
 
@@ -29,14 +31,23 @@ for frontend development running `npm run dev` will run vite in dev mode for hot
 
 ### To Deploy to a server:
 Right now the only way I have tested deployment to a server running ssl has been running a docker compose natively however any docker compose compatible container should be able to run things
+in this case allowed Callback Url should https://taskbask.space/api/auth/authzero/callback
+and the allowed web origin should be https://taskbask.space
 
 Copy the production folder to the server
 Run Node initialize secrets to make secrets easier or write your secrets directly into the docker compose yaml
 You will need to change your ssl hostname to your own domain
 
-todo: ssl setup.  setting up certbot usually requires a specific command to get it working but i haven't set it up yet.  i will update with instructions as i run them
+#### SSL setup
+- After you have copied the production folder, make a backup of nginx\conf\app.conf to app.conf.bak
+- delete everything below the first server.  this will allow nginx to boot up for the first time
+- run `docker compose up nginx certbot -d` (from inside the production folder)
+- then run `docker compose run --rm   --entrypoint ""   certbot certbot certonly   --webroot -w /var/www/certbot   -d yourdomain.com  --email youremail@yourprovider.com --agree-tos --no-eff-email`
+- this will have everything initialized for you and you can delete your edited app.conf and restore from backup
+- you probably want to run `docker compose down`
 
-Run docker compose up -d
+
+Run `docker compose up -d`
 
 Anytime a new image is deployed, watchtower should redeploy the latest version for you automatically.  you can control this by forking the project and creating your own images
 
@@ -57,3 +68,5 @@ we desperately need more linting rules
 we should implement versioning
 
 clean up the user selector tech debt
+
+i'd probably change my deployment to kubernetes.  this is great for a small project and getting off the ground but we should let a real service handle ssl certs and container management for us

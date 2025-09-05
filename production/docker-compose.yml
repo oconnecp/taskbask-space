@@ -37,16 +37,19 @@ services:
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/mydb
       HOSTNAME: taskbask.space
+      DB_HOST: db
+      MODE: production
       AUTH_ZERO_DOMAIN: /run/secrets/auth_zero_domain
       AUTH_ZERO_CLIENT_ID: /run/secrets/auth_zero_client_id
       AUTH_ZERO_CLIENT_SECRET: /run/secrets/auth_zero_client_secret
       SESSION_SECRET: /run/secrets/session_secret
-      MODE: production
+      DB_ENCRYPTION_KEY: /run/secrets/db_encryption_key
     secrets:
       - auth_zero_domain
       - auth_zero_client_id
       - auth_zero_client_secret
       - session_secret
+      - db_encryption_key
     depends_on:
       - db
     restart: always
@@ -88,5 +91,7 @@ secrets:
     file: ./secrets/auth_zero_client_secret.txt
   session_secret:
     file: ./secrets/session_secret.txt
+  db_encryption_key:
+    file: ./secrets/db_encryption_key.txt
   watchtower_webhook_secret:
     file: ./secrets/watchtower_webhook_secret.txt

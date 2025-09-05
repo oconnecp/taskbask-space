@@ -7,6 +7,7 @@ const secretFiles = [
   'auth_zero_client_id.txt',
   'auth_zero_client_secret.txt',
   'session_secret.txt',
+  'db_encryption_key.txt',
   'watchtower_webhook_secret.txt'
 ];
 
