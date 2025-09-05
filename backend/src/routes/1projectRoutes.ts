@@ -1,12 +1,12 @@
 import express from 'express';
 
-import { ensureAuthenticated } from "../tools/ensureAuthenticatedMiddleware";
+import { ensureAuthenticated } from "../tools/1ensureAuthenticatedMiddleware";
 
-import { TBUser } from '../db/entities/tbUser';
+import { TBUser } from '../db/entities/1tbUser';
 import { ProjectDTO, ProjectPayloadDTO } from '../../shared/types/sharedTypes';
 
-import { createNewProject, getAllProjectPayloadsByUserId, upsertMembershiptoProject } from '../services/projectService';
-import { ProjectRole } from '../db/entities/tbProjectMembership';
+import { createNewProject, getAllProjectPayloadsByUserId, upsertMembershiptoProject } from '../services/1projectService';
+import { ProjectRole } from '../db/entities/1tbProjectMembership';
 
 export const baseProjectUrl = '/project';
 export const projectRouter = express.Router()

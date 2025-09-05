@@ -1,12 +1,12 @@
 import { ProjectDTO, ProjectMembershipDTO, ProjectPayloadDTO, ProjectStatusDTO } from "../../shared/types/sharedTypes";
 
-import { TBProject } from "../db/entities/tbProject";
-import { ProjectRole, TBProjectMembership } from "../db/entities/tbProjectMembership";
-import { TBProjectStatus } from "../db/entities/tbProjectStatus";
+import { TBProject } from "../db/entities/1tbProject";
+import { ProjectRole, TBProjectMembership } from "../db/entities/1tbProjectMembership";
+import { TBProjectStatus } from "../db/entities/1tbProjectStatus";
 
-import { upsertProject } from "../db/repositories/tbProjectRepository";
-import { insertProjectMemberships, upsertProjectMembership, getProjectMembershipsByUserId, getProjectMembershipsByProjectId, getAllProjectMembershipsByProjectIds } from "../db/repositories/tbProjectMembershipRepository";
-import { insertProjectStatuses, getProjectStatusesWithProjectHydration } from "../db/repositories/tbProjectStatusRespository";
+import { upsertProject } from "../db/repositories/1tbProjectRepository";
+import { insertProjectMemberships, upsertProjectMembership, getProjectMembershipsByUserId, getProjectMembershipsByProjectId, getAllProjectMembershipsByProjectIds } from "../db/repositories/1tbProjectMembershipRepository";
+import { insertProjectStatuses, getProjectStatusesWithProjectHydration } from "../db/repositories/1tbProjectStatusRespository";
 
 //create the project
 export const createNewProject = async (userId: string, projectDTO: ProjectDTO): Promise<ProjectPayloadDTO> => {

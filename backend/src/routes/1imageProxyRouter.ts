@@ -1,7 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 
-import { ensureAuthenticated } from "../tools/ensureAuthenticatedMiddleware";
+import { ensureAuthenticated } from "../tools/1ensureAuthenticatedMiddleware";
 
 
 export const baseImageProxyUrl = '/image';

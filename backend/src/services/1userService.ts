@@ -1,7 +1,7 @@
-import { TBUser } from "../db/entities/tbUser";
+import { TBUser } from "../db/entities/1tbUser";
 
 import { UserDTO } from "../../shared/types/sharedTypes";
-import { getAllUsers as fetchAllUsers } from "../db/repositories/tbUserRepository";
+import { getAllUsers as fetchAllUsers } from "../db/repositories/1tbUserRepository";
 
 export const getAllUsers = async (): Promise<UserDTO[]> => {
     const users = await fetchAllUsers();

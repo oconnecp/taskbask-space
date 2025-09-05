@@ -1,9 +1,9 @@
 import express from 'express';
 
 import { UserDTO } from '../../shared/types/sharedTypes';
-import { getAllUsers} from '../services/userService';
+import { getAllUsers} from '../services/1userService';
 
-import { ensureAuthenticated } from "../tools/ensureAuthenticatedMiddleware";
+import { ensureAuthenticated } from "../tools/1ensureAuthenticatedMiddleware";
 
 export const baseUserUrl = '/user';
 export const userRouter = express.Router()

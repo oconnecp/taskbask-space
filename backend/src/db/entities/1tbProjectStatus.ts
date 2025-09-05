@@ -1,7 +1,7 @@
   import {
   Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index, Unique
 } from "typeorm";
-import { TBProject } from "./tbProject";
+import { TBProject } from "./1tbProject";
 
 @Entity({ name: "project_statuses" })
 @Unique("u_project_status_name", ["projectId", "name"])

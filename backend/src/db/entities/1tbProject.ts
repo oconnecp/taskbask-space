@@ -1,5 +1,5 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, OneToMany,
+  Entity, PrimaryGeneratedColumn, Column,
   CreateDateColumn, UpdateDateColumn, Index
 } from "typeorm";
 

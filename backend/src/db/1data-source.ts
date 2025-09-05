@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { TBUser } from "./entities/tbUser";
+import { TBUser } from "./entities/1tbUser";
 
-import { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME } from "../tools/constants";
+import { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME } from "../tools/1constants";
 
 export const appDataSource = new DataSource({
   type: "postgres",

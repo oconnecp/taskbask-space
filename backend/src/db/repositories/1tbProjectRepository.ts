@@ -1,6 +1,6 @@
 import { ProjectDTO } from "../../../shared/types/sharedTypes";
-import { appDataSource } from "../data-source";
-import { TBProject } from "../entities/tbProject";
+import { appDataSource } from "../1data-source";
+import { TBProject } from "../entities/1tbProject";
 
 const projectStatusRepository = appDataSource.getRepository(TBProject);
 

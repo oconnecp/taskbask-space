@@ -2,7 +2,7 @@ import './App.css'
 import React, { useEffect, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
-import { getUser } from './services/userService';
+import { getUser } from './services/1userService';
 
 //Assets
 import { PersonSVG } from './assets/PersonSVG';
@@ -15,7 +15,7 @@ import { ToastHandler } from './components/Toast/ToastHandler';
 
 //Pages
 import Dashboard from './components/Dashboard/Dashboard';
-import { getFullUrl } from './services/apiClientService';
+import { getFullUrl } from './services/1apiClientService';
 
 //Lazy loaded pages
 const Login = React.lazy(() => import('./components/Authentication/Login'));
