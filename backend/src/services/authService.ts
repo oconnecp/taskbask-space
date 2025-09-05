@@ -1,8 +1,8 @@
 import passport from 'passport';
 import { Strategy as Auth0Strategy } from 'passport-auth0';
 import { Application } from 'express';
-import { BACKEND_ORIGIN, AUTH_ZERO_DOMAIN, AUTH_ZERO_CLIENT_ID, AUTH_ZERO_CLIENT_SECRET } from '../tools/1constants';
-import { upsertUser, getUserById } from '../db/repositories/1tbUserRepository';
+import { BACKEND_ORIGIN, AUTH_ZERO_DOMAIN, AUTH_ZERO_CLIENT_ID, AUTH_ZERO_CLIENT_SECRET } from '../tools/constants';
+import { upsertUser, getUserById } from '../db/repositories/tbUserRepository';
 
 export const initializeAuthService = (app: Application) => {
     app.use(passport.initialize());

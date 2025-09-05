@@ -1,4 +1,4 @@
-import { apiGet } from './1apiClientService';
+import { apiGet } from './apiClientService';
 import { UserDTO } from '../../shared/types/sharedTypes';
 
 export const getUser = async (): Promise<UserDTO | null> => {

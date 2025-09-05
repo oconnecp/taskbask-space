@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFullUrl } from '../../services/1apiClientService';
+import { getFullUrl } from '../../services/apiClientService';
 import { UserDTO } from '../../../shared/types/sharedTypes';
 
 interface ProfileProps {

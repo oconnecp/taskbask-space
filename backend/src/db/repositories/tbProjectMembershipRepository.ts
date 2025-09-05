@@ -1,5 +1,5 @@
-import { appDataSource } from "../1data-source";
-import { ProjectRole, TBProjectMembership } from "../entities/1tbProjectMembership";
+import { appDataSource } from "../data-source";
+import { ProjectRole, TBProjectMembership } from "../entities/tbProjectMembership";
 import { In } from "typeorm";
 
 const projectMembershiptRepository = appDataSource.getRepository(TBProjectMembership);

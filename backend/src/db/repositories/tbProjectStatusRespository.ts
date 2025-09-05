@@ -1,6 +1,6 @@
 import { In } from "typeorm";
-import { appDataSource } from "../1data-source";
-import { TBProjectStatus } from "../entities/1tbProjectStatus";
+import { appDataSource } from "../data-source";
+import { TBProjectStatus } from "../entities/tbProjectStatus";
 
 const projectStatusRepository = appDataSource.getRepository(TBProjectStatus);
 

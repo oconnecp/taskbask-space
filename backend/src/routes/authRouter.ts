@@ -1,9 +1,9 @@
 import express from 'express';
 import passport from 'passport';
 
-import { FRONTEND_ORIGIN } from '../tools/1constants';
+import { FRONTEND_ORIGIN } from '../tools/constants';
 
-import { TBUser } from '../db/entities/1tbUser';
+import { TBUser } from '../db/entities/tbUser';
 
 export const baseAuthUrl = '/auth';
 export const authRouter = express.Router()

@@ -1,6 +1,6 @@
 import { TaskDTO } from "../../../shared/types/sharedTypes";
-import { appDataSource } from "../1data-source";
-import { TaskPriority, TBTask } from "../entities/1tbTask";
+import { appDataSource } from "../data-source";
+import { TaskPriority, TBTask } from "../entities/tbTask";
 
 const taskrepository = appDataSource.getRepository(TBTask);
 

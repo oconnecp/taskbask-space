@@ -1,8 +1,8 @@
-import { appDataSource } from "../1data-source";
-import { TBUser } from "../entities/1tbUser";
+import { appDataSource } from "../data-source";
+import { TBUser } from "../entities/tbUser";
 
-import { DB_ENCRYPTION_KEY } from "../../tools/1constants";
-import { encrypt, decrypt } from "../../services/1encryptionService"
+import { DB_ENCRYPTION_KEY } from "../../tools/constants";
+import { encrypt, decrypt } from "../../services/encryptionService"
 
 const userRepository = appDataSource.getRepository(TBUser);
 

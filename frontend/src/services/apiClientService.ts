@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-import { BACKEND_ORIGIN } from "../tools/1constants";
-import { CacheService } from "./1cacheService";
+import { BACKEND_ORIGIN } from "../tools/constants";
+import { CacheService } from "./cacheService";
 
 const cacheService = new CacheService();
 const BaseUrl = new URL('api/path', BACKEND_ORIGIN).href;

@@ -7,17 +7,17 @@ import connectPGSimple from 'connect-pg-simple';
 import {
   ADD_CORS, PORT, FRONTEND_ORIGIN, SESSION_SECRET, MODE,
   DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
-} from './src/tools/1constants';
+} from './src/tools/constants';
 //Services
-import { initializeAuthService } from './src/services/1authService';
-import { appDataSource } from "./src/db/1data-source";
+import { initializeAuthService } from './src/services/authService';
+import { appDataSource } from "./src/db/data-source";
 
 //Routers
-import {baseAuthUrl, authRouter} from './src/routes/1authRouter';
-import { baseImageProxyUrl, imageProxyRouter } from './src/routes/1imageProxyRouter';
-import { baseProjectUrl, projectRouter } from './src/routes/1projectRoutes';
-import { baseTaskUrl, taskRouter } from './src/routes/1taskRoutes';
-import { baseUserUrl, userRouter } from './src/routes/1userRouter';
+import {baseAuthUrl, authRouter} from './src/routes/authRouter';
+import { baseImageProxyUrl, imageProxyRouter } from './src/routes/imageProxyRouter';
+import { baseProjectUrl, projectRouter } from './src/routes/projectRoutes';
+import { baseTaskUrl, taskRouter } from './src/routes/taskRoutes';
+import { baseUserUrl, userRouter } from './src/routes/userRouter';
 
 
 const app = express();
