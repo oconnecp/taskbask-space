@@ -24,8 +24,4 @@ export class TBProjectStatus {
   // display order (0,1,2...)
   @Column({ type: "int" })
   order!: number;
-
-  // optional future-proofing
-  @Column({ name: "is_terminal", type: "boolean", default: false })
-  isTerminal!: boolean;
 }

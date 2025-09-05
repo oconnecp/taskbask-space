@@ -19,6 +19,7 @@ import { getFullUrl } from './services/ApiClient';
 
 //Lazy loaded pages
 const Login = React.lazy(() => import('./components/Authentication/Login'));
+const Profile = React.lazy(() => import('./components/Profile/Profile'));
 
 
 function App() {
@@ -91,6 +92,7 @@ function App() {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile user={user}/>} />
           <Route path="*" element={<Dashboard user={user} />} />
         </Routes>
       </Suspense>

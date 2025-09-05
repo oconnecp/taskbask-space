@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { UserResponse } from '../../../shared/types/SharedTypes';
-import { getUser } from '../../services/UserService';
+import { UserDTO } from '../../../shared/types/SharedTypes';
 
 interface DashboardProps {
-    user?: UserResponse | null;
+    user?: UserDTO | null;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({user}) => {

@@ -34,6 +34,12 @@ export const upsertUser = async (user: TBUser | Required<Omit<TBUser, 'id' | 'cr
     if (existingUser) {
         existingUser.name = user.name || existingUser.name;
         existingUser.accessToken = encrypt(user.accessToken || existingUser.accessToken || '', DB_ENCRYPTION_KEY);
+        existingUser.profilePictureUrl = user.profilePictureUrl || existingUser.profilePictureUrl;
+        existingUser.email = user.email || existingUser.email;
+        existingUser.accessToken = user.accessToken || existingUser.accessToken;
+        existingUser.profileJson = user.profileJson || existingUser.profileJson;
+        existingUser.authProvider = user.authProvider || existingUser.authProvider;
+        
         return await userRepository.save(existingUser);
     } else {
 

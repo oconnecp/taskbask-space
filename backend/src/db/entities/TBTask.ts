@@ -14,7 +14,7 @@ export enum TaskPriority {
 }
 
 @Entity({ name: "tasks" })
-export class Task {
+export class TBTask {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
@@ -58,6 +58,14 @@ export class Task {
     default: TaskPriority.MEDIUM
   })
   priority!: TaskPriority;
+
+  //This is not ideal.  in the future we will probably soft delete users for this reason alone
+  @Index()
+  @Column({ name: "created_by_id", type: "uuid", nullable: true })
+  createdById!: string | null;
+
+  @ManyToOne(() => TBUser, { onDelete: "SET NULL" })
+  createdBy!: TBUser | null;
 
   @CreateDateColumn({ name: "created_at" }) createdAt!: Date;
   @UpdateDateColumn({ name: "updated_at" }) updatedAt!: Date;

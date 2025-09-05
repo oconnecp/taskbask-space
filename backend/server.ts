@@ -14,6 +14,7 @@ import { AppDataSource } from "./src/db/data-source";
 
 //Routers
 import AuthRouter from './src/routes/AuthRouter';
+import ImageProxyRouter from './src/routes/ImageProxyRouter';
 
 
 const app = express();
@@ -73,6 +74,7 @@ initializeAuthService(app);
 
 
 app.use(`${baseUrl}/auth`, AuthRouter);
+app.use(`${baseUrl}/images`, ImageProxyRouter);
 
 app.get(`${baseUrl}/healthcheck`, async (req: Request, res: Response) => {
   console.log('Health check endpoint hit');
