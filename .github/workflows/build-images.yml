@@ -38,4 +38,4 @@ jobs:
           npm run build-image
       
       - name: Push frontend image
-        run: docker push oconnecp/taskbask.space--frontend:latest
+        run: docker push oconnecp/taskbask.space-frontend:latest
