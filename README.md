@@ -2,6 +2,7 @@
 This was created as a profile specifically at the request of [CommunityShare.org](https://www.communityshare.org/)
 
 If you can't absolutely BASK in your TASKS, then what are you really doing with your space?
+[Video Walkthrough](https://drive.google.com/file/d/1qDZhJ6RRUQ_bpxKkQl-hPqi_Z9AKk7i3/view?usp=drive_link)
 
 ## Instructions for use:
 Create an application inside Auth0
