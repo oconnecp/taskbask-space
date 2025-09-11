@@ -14,7 +14,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     if (!user) {
         return (
             <div>
-                Welcome to TaskBask!  Please <a href="/login">log in</a> to access your dashboard.
+                Welcome to TaskBask!  We invite you to bask in your tasks.<br/>
+                Please <a href="/login">log in</a> to access your dashboard.
             </div>
         );
     }
