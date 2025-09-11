@@ -39,3 +39,7 @@ jobs:
       
       - name: Push frontend image
         run: docker push oconnecp/taskbask.space-frontend:latest
+
+      - name: Trigger Watchtower webhook
+        run: |
+          curl -X POST https://taskbask.space/deploy/v1/update -H "X-Deploy-Secret: ${{ secrets.WATCHTOWER_WEBHOOK_SECRET }}"
