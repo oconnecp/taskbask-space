@@ -1,5 +1,3 @@
-import { info } from "sass";
-
 const handlers: ((actionType:ActionTypeEnum, toast: ToastType) => void)[] = [];
 
 export enum ActionTypeEnum {

@@ -28,6 +28,11 @@ export const apiPost = async <T>(endpoint: string, data: object) => {
     return axios.post<T>(fullUrl, data, { withCredentials: true });
 }
 
+export const apiPut = async <T>(endpoint: string, data: object) => {
+    const fullUrl = new URL(endpoint, BaseUrl).href;
+    return axios.put<T>(fullUrl, data, { withCredentials: true });
+}
+
 export const getFullUrl = (endpoint: string) => {
     return new URL(endpoint, BaseUrl).href;
 }

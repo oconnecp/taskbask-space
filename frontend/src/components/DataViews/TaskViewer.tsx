@@ -6,10 +6,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import Modal from '../Modal/Modal';
 import { ProjectPayloadDTO, TaskDTO, NewTaskDTO } from '../../../shared/types/sharedTypes';
 
-import { postNewTask } from '../../services/taskService';
+import { postNewTask, updateTask } from '../../services/taskService';
 import { getAllTasksForProject } from '../../services/projectService';
 import { getAllUsers } from '../../services/userService';
-import { assign } from 'lodash';
+import { getFullUrl } from '../../services/apiClientService';
+
+import { ToastTypeEnum, ToastType, triggerToast } from '../Toast/ToastService';
 
 interface TaskViewerrProps {
     selectedProjectPayloadDTO?: ProjectPayloadDTO | null;
@@ -123,9 +125,50 @@ const TaskViewer: React.FC<TaskViewerrProps> = ({ selectedProjectPayloadDTO }) =
         }
     };
 
-    const findUserPictureFromId = (userId: string) => {
-        return allUserOptions.find(user => user.value === userId)?.profilePictureUrl || '';
+    // Utility to find user profile picture URL from user ID
+    // This is not optimized for production and will need to be changed
+    // if the user list is large.
+    // This needs to be a map or dictionary lookup in production
+    const findUserPictureURLFromId = (userId: string): string => {
+        const user = allUserOptions.find(user => user.value === userId);
+        if (!user) return '';
+
+        return user.profilePictureUrl ? getFullUrl(`/api/image/proxy-image?url=${encodeURIComponent(user.profilePictureUrl)}`) : '';
     }
+
+    //Utility to find the user name from user ID
+    // This is not optimized for production and will need to be changed
+    // if the user list is large.
+    // This needs to be a map or dictionary lookup in production
+    const findUserNameFromId = (userId: string): string => {
+        const user = allUserOptions.find(user => user.value === userId);
+        return user ? user.label : 'Unknown User';
+    }
+
+    const setTaskStatus = (taskDTO: TaskDTO, newStatusId: string | null): void => {
+        if (!newStatusId) {
+            console.error("Status ID cannot be null");
+            return;
+        }
+        taskDTO.statusId = newStatusId;
+        //call api to update task
+        updateTask(taskDTO).then(updatedTask => {
+            if (updatedTask) {
+                //update task in task array
+                const updatedTaskArray = taskArray.map(task => {
+                    if (task.id === updatedTask.id) {
+                        return updatedTask;
+                    }
+                    return task;
+                });
+                setTaskArray(updatedTaskArray);
+                console.log("Task updated successfully");
+                triggerToast({ message: 'Task updated successfully', duration: 3000, type: ToastTypeEnum.SUCCESS });
+            }else {
+                console.error("Failed to update task");
+            }
+        });
+    };
 
     if (tasksLoading) {
         return <div>Loading projects...</div>;
@@ -290,11 +333,11 @@ const TaskViewer: React.FC<TaskViewerrProps> = ({ selectedProjectPayloadDTO }) =
                 <p>No Tasks found.</p>
             ) : (
                 <>
-                    {taskArray.map(taskDTOs => (
+                    {taskArray.map(taskDTO => (
                         <div
-                            style={selectedTaskId === taskDTOs.id ? selectedTaskStyle : taskListStyle}
-                            onClick={() => onTaskClick(taskDTOs.id)}
-                            key={taskDTOs.id}
+                            style={selectedTaskId === taskDTO.id ? selectedTaskStyle : taskListStyle}
+                            onClick={() => onTaskClick(taskDTO.id)}
+                            key={taskDTO.id}
                         >
                             <span
                                 style={{
@@ -302,15 +345,15 @@ const TaskViewer: React.FC<TaskViewerrProps> = ({ selectedProjectPayloadDTO }) =
                                     width: 12,
                                     height: 12,
                                     borderRadius: '50%',
-                                    background: getPriorityColor(taskDTOs.priority),
+                                    background: getPriorityColor(taskDTO.priority),
                                     marginRight: 8,
                                     verticalAlign: 'middle'
                                 }}
                             />
-                            {taskDTOs.assigneeId && (
+                            {taskDTO.assigneeId && (
                                 <img
-                                    src={`/api/profile-pic-proxy?url=${encodeURIComponent(findUserPictureFromId(taskDTOs.assigneeId))}`}
-                                    alt="assignee"
+                                    src={findUserPictureURLFromId(taskDTO.assigneeId)}
+                                    alt={`Assigned to ${findUserNameFromId(taskDTO.assigneeId)}`}
                                     style={{
                                         width: 24,
                                         height: 24,
@@ -322,7 +365,27 @@ const TaskViewer: React.FC<TaskViewerrProps> = ({ selectedProjectPayloadDTO }) =
                                     }}
                                 />
                             )}
-                            <span>{taskDTOs.title}</span> - <span>{taskDTOs.description}</span>
+                            <span>{taskDTO.title}</span> - <span>{taskDTO.description}</span>
+                            <span><Select
+                                options={statusOptions}
+                                value={statusOptions.find(option => option.value === taskDTO.statusId) || null}
+                                onChange={(selectedOption) => {
+                                    // selectedOption can be null
+                                    setTaskStatus(taskDTO, selectedOption ? selectedOption.value : null);
+                                }}
+                                theme={theme => ({
+                                    ...theme,
+                                    colors: {
+                                        ...theme.colors,
+                                        primary25: '#333',   // option hover
+                                        primary: '#555',     // selected option
+                                        neutral0: '#222',    // menu background
+                                        neutral80: '#fff',   // text color
+                                        neutral20: '#555',   // border color
+                                        neutral30: '#888',   // border hover
+                                    },
+                                })}
+                            /></span>
                         </div>
                     ))}
                 </>

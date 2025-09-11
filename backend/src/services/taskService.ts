@@ -1,7 +1,7 @@
 import { TBTask } from "../db/entities/tbTask";
 import { NewTaskDTO, TaskDTO } from "../../shared/types/sharedTypes";
 
-import { getTasksByProjectId, insertTasks } from "../db/repositories/tbTaskRepository"
+import { getTasksByProjectId, insertTasks, upsertTask } from "../db/repositories/tbTaskRepository"
 
 export const getTasksForProject = async (projectId: string): Promise<TaskDTO[]> => {
     const tasks = await getTasksByProjectId(projectId);
@@ -13,6 +13,16 @@ export const createTask = async (createdById:string, newTaskDTO: NewTaskDTO): Pr
     const taskDTOs =  convertTasksToDTO(newTasks);
     return taskDTOs[0];
 };
+
+export const updateTask = async (userId: string, taskDTO: TaskDTO): Promise<TaskDTO | null> => {
+    //in the future we will check permissions here
+    console.log('Updating task:', taskDTO);
+    // In a real application, you would check if the user has permission to update the task
+    const updatedTask = await upsertTask(taskDTO, userId);
+    console.log('Updated task:', updatedTask);
+    return convertTasksToDTO([updatedTask])[0];
+
+}
 
 export const convertTasksToDTO = (tasks: TBTask[]): TaskDTO[] => {
     const taskDTOs: TaskDTO[] =  tasks.map(task => ({

@@ -29,7 +29,8 @@ export const getTaskById = async (taskId: string): Promise<TBTask | null> => {
     });
 };
 
-export const upsertTask = async (taskDTO: TaskDTO): Promise<TBTask | null> => {
+export const upsertTask = async (taskDTO: TaskDTO, userId:String): Promise<TBTask> => {
+    //in the future we will add the userId of ther updater
     const existingTask = await getTaskById(taskDTO.id!);
     
     if(!existingTask) {
@@ -48,5 +49,5 @@ export const upsertTask = async (taskDTO: TaskDTO): Promise<TBTask | null> => {
     existingTask.assigneeId = taskDTO.assigneeId || existingTask.assigneeId;
     existingTask.projectId = taskDTO.projectId || existingTask.projectId;
 
-    return taskrepository.save(existingTask);
+    return await taskrepository.save(existingTask);
 };
